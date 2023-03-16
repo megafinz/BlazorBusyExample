@@ -1,0 +1,45 @@
+﻿@namespace BlazorBusyExample.Shared
+
+@implements IDisposable
+
+@inject BusyService BusyService
+
+@code {
+
+    private BusyState? _busyState;
+    
+    [Parameter, EditorRequired] public required string Key { get; set; }
+    
+    [Parameter] public EventCallback<bool> IsBusyChanged { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _busyState = BusyService.GetBusyState(Key);
+        _busyState.Changed += HandleBusyStateChanged;
+
+        if (_busyState.IsBusy)
+        {
+            await IsBusyChanged.InvokeAsync(_busyState.IsBusy);
+        }
+        
+        await base.OnInitializedAsync();
+    }
+
+    private void HandleBusyStateChanged()
+    {
+        if (_busyState is not null)
+        {
+            InvokeAsync(() => IsBusyChanged.InvokeAsync(_busyState.IsBusy));    
+        }
+    }
+
+    public void Dispose()
+    {
+        if (_busyState is not null)
+        {
+            _busyState.Changed -= HandleBusyStateChanged;
+        }
+    }
+
+}
+ 

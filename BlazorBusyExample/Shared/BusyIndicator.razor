@@ -1,0 +1,13 @@
+﻿@namespace BlazorBusyExample.Shared
+
+@if (IsBusy)
+{
+    <p>Loading…</p>
+}
+
+@code {
+
+    [Parameter, EditorRequired]
+    public bool IsBusy { get; set; }
+
+}

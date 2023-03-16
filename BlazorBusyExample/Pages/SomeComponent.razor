@@ -1,0 +1,23 @@
+﻿@namespace BlazorBusyExample.Pages
+
+@using BlazorBusyExample.Shared
+
+@inject BusyService BusyService
+
+<button @onclick="HandleClick">
+    Do Something From A Component!
+</button>
+
+@code {
+
+    private async Task HandleClick()
+    {
+        // BusyService can be accessed on a different thread.
+        await Task.Run(async () =>
+        {
+            using var _ = BusyService.UseBusyState("BusyKey1");
+            await Task.Delay(1000);    
+        });
+    }
+    
+}
